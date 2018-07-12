@@ -3,15 +3,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Cliente_model extends CI_Model
 {
-    public $id; public $nombre; public $correo;
+    public $id; public $nombre; public $activo; public $correo; public $zip;
+    public $telefono1; public $telefono2; public $pais; public $direccion;
 
     public function get_cliente($id)
     {
-        $this->id = intval($id);
-        $this->nombre = 'Lessner';
-        $this->correo = 'camilessner@gmail.com';
+        $this->db->where( array( 'id' => $id, 'activo' => 1) );
 
-        return $this;
+        $query = $this->db->get('clientes');
+
+        $row = $query->custom_row_object(0, 'Cliente_model');
+
+        if (isset($row)){
+            $row->id = intval($row->id);
+            $row->activo = intval($row->activo);
+        }
+
+        return $row;
 
     }
 
