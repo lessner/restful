@@ -78,8 +78,30 @@ class Clientes extends REST_Controller
 
         $this->load->library('form_validation');
 
+        $this->form_validation->set_data($data);
+
+        if ($this->form_validation->run('cliente_put')){ //true: ok, false: falta una regla
+            //Todo OK
+            $cliente = $this->Cliente_model->set_datos($data);
+
+            $respuesta = $cliente->insert();
+
+            if ($respuesta['err']){
+                $this->response($respuesta, REST_Controller::HTTP_BAD_REQUEST);
+            } else {
+                $this->response($respuesta);
+            }
+
+        } else {
+            $respuesta = array(
+                'err' => TRUE,
+                'mensaje' => 'Hay errores en el envio de información',
+                'errores' => $this->form_validation->get_errores_arreglo()
+            );
+            $this->response($respuesta, REST_Controller::HTTP_BAD_REQUEST);
+        }
+
         $this->response($data);
-        
     }
 
 }
